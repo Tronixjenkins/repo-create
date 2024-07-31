@@ -66,13 +66,13 @@ jobs:
           git checkout -b prd
           git push --set-upstream https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git prd
           
-      # - name: Copy CI/CD workflow to the new repository
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GH_PAT }}
-      #   run: |
-      #     cd ${{ env.REPO_NAME }}
-      #     mkdir -p .github/workflows
-      #     cp ../.github/workflows/example-workflow.yml .github/workflows/
-      #     git add .github/workflows/example-workflow.yml
-      #     git commit -m "Add CI/CD workflow"
-      #     git push https://${{ secrets.GH_PAT }}@github.com/${{ github.repository_owner }}/${{ env.REPO_NAME }}.git
+      - name: Copy CI/CD workflow from dbtrepo to the new repository
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          mkdir -p ${{ env.REPO_NAME }}/.github/workflows
+          cp test-copy/.github/workflows/blank.yml ${{ env.REPO_NAME }}/.github/workflows/
+          cd ${{ env.REPO_NAME }}
+          git add .github/workflows/blank.yml
+          git commit -m "Add CI/CD workflow from dbtrepo"
+          git push https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git
