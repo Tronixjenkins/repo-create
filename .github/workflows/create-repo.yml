@@ -7,6 +7,9 @@ jobs:
   create-repo:
     runs-on: ubuntu-latest
 
+    env:
+      REPO_NAME: new-repo  # Set the repository name here
+
     steps:
       - name: Checkout the current repository
         uses: actions/checkout@v2
@@ -18,48 +21,53 @@ jobs:
             -H "Authorization: token ${{ secrets.GH_PAT }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/user/repos \
-            -d '{"name":"Test_repo","private":false}'
+            -d "{\"name\":\"${{ env.REPO_NAME }}\",\"private\":false}"
 
       - name: Clone the new repository
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          git clone https://${{ secrets.GH_PAT }}@github.com/${{ github.repository_owner }}/Test_repo.git
-          cd new-repo
-          echo "# New Repo" > README.md
+          git clone https://${{ secrets.GH_PAT }}@github.com/${{ github.repository_owner }}/${{ env.REPO_NAME }}.git
+          cd ${{ env.REPO_NAME }}
+          echo "# ${{ env.REPO_NAME }}" > README.md
           git add README.md
           git commit -m "Initial commit"
-          git push https://${{ secrets.GH_PAT }}@github.com/${{ github.repository_owner }}/Test_repo.git
+          git push https://${{ secrets.GH_PAT }}@github.com/${{ github.repository_owner }}/${{ env.REPO_NAME }}.git
 
-
-
+     
       - name: Create develop branch from main
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          cd Test_repo
+          cd ${{ env.REPO_NAME }}
           git checkout -b develop
-          git push --set-upstream https://github.com/${{ github.repository_owner }}/Test_repo.git develop
+          git push --set-upstream https://${{ secrets.GH_PAT }}@github.com/${{ github.repository_owner }}/${{ env.REPO_NAME }}.git develop
 
       - name: Create qat branch from develop
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          cd Test_repo
+          cd ${{ env.REPO_NAME }}
           git checkout develop
           git checkout -b qat
-          git push --set-upstream https://github.com/${{ github.repository_owner }}/Test_repo.git qat
+          git push --set-upstream https://${{ secrets.GH_PAT }}@github.com/${{ github.repository_owner }}/${{ env.REPO_NAME }}.git qat
 
       - name: Create prd branch from qat
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          cd Test_repo
+          cd ${{ env.REPO_NAME }}
           git checkout qat
           git checkout -b prd
-          git push --set-upstream https://github.com/${{ github.repository_owner }}/Test_repo.git prd
+          git push --set-upstream https://${{ secrets.GH_PAT }}@github.com/${{ github.repository_owner }}/${{ env.REPO_NAME }}.git prd
 
       # - name: Copy CI/CD workflow to the new repository
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GH_PAT }}
       #   run: |
-      #     cd Test_repo
+      #     cd ${{ env.REPO_NAME }}
       #     mkdir -p .github/workflows
       #     cp ../.github/workflows/example-workflow.yml .github/workflows/
       #     git add .github/workflows/example-workflow.yml
       #     git commit -m "Add CI/CD workflow"
-      #     git push https://github.com/${{ github.repository_owner }}/Test_repo.git
-
-      
+      #     git push https://${{ secrets.GH_PAT }}@github.com/${{ github.repository_owner }}/${{ env.REPO_NAME }}.git
