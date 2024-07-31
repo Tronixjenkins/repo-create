@@ -71,7 +71,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           mkdir -p ${{ env.REPO_NAME }}/.github/workflows
-          cp ${{ env.REPO_NAME }}/test-copy/.github/workflows/blank.yml ${{ env.REPO_NAME }}/.github/workflows/
+          cp ${{ env.ORG_NAME }}/test-copy/.github/workflows/blank.yml ${{ env.REPO_NAME }}/.github/workflows/
           cd ${{ env.REPO_NAME }}
           git add .github/workflows/blank.yml
           git commit -m "Add CI/CD workflow from dbtrepo"
