@@ -15,6 +15,11 @@ jobs:
       - name: Checkout the current repository
         uses: actions/checkout@v2
 
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          
       - name: Create a new repository
         id: create_repo
         run: |
