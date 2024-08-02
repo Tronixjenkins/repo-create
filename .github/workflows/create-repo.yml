@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      REPO_NAME: new-repo5  # Set the repository name here
+      REPO_NAME: new-repo_5  # Set the repository name here
       ORG_NAME: Tronixjenkins
 
     steps:
@@ -65,7 +65,7 @@ jobs:
 
       - name: Clone the source repository to copy the CI/CD workflow
         run: |
-          git clone https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/test_copy.git
+          git clone https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/test-copy.git
 
       - name: Copy CI/CD workflow from test_copy to the new repository
         run: |
