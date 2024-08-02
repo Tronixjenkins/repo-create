@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      REPO_NAME: new-test-repo # Set the repository name here
+      REPO_NAME: netest-repo # Set the repository name here
       ORG_NAME: Tronixjenkins
 
     steps:
@@ -46,7 +46,7 @@ jobs:
 
       - name: Clone the source repository to copy the CI/CD workflow
         run: |
-          git clone https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/test_copy.git
+          git clone https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/test-copy.git
 
       - name: Copy CI/CD workflow from test_copy to the new repository
         run: |
@@ -54,7 +54,7 @@ jobs:
           cp test_copy/.github/workflows/blank.yml ${{ env.REPO_NAME }}/.github/workflows/
           cd ${{ env.REPO_NAME }}
           git add .github/workflows/blank.yml
-          git commit -m "Add CI/CD workflow from test_copy"
+          git commit -m "Add CI/CD workflow from test-copy"
           git push origin main
 
       - name: Create develop branch from main
