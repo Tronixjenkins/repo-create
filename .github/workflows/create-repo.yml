@@ -35,14 +35,13 @@ jobs:
           fi
 
       - name: Clone the new repository
-        if: steps.check_repo.outputs.repo_exists == 'false'
         run: |
           git clone https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git
           cd ${{ env.REPO_NAME }}
           echo "# ${{ env.REPO_NAME }}" > README.md
           git add README.md
           git commit -m "Initial commit"
-          git push origin main
+          git push https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git
 
       - name: Clone the source repository to copy the CI/CD workflow
         run: |
@@ -62,20 +61,18 @@ jobs:
         run: |
           cd ${{ env.REPO_NAME }}
           git checkout -b develop
-          git push --set-upstream origin develop
+          git push --set-upstream https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git develop
 
       - name: Create qat branch from develop
         run: |
           cd ${{ env.REPO_NAME }}
           git checkout develop
           git checkout -b qat
-          git push --set-upstream origin qat
+          git push --set-upstream https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git qat
 
       - name: Create prd branch from qat
         run: |
           cd ${{ env.REPO_NAME }}
           git checkout qat
           git checkout -b prd
-          git push --set-upstream origin prd
-      #     git commit -m "Add CI/CD workflow from test_copy"
-      #     git push origin main
+          git push --set-upstream https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git prd
