@@ -50,11 +50,12 @@ jobs:
 
       - name: Copy CI/CD workflow from test_copy to the new repository
         run: |
-          mkdir -p ${{ env.REPO_NAME }}/.github/workflows
-          cp test-copy/.github/workflows/blank.yml ${{ env.REPO_NAME }}/.github/workflows/
-          cd ${{ env.REPO_NAME }}
+          cd test-copy
+          mkdir -p ../${{ env.REPO_NAME }}/.github/workflows
+          cp .github/workflows/blank.yml ../${{ env.REPO_NAME }}/.github/workflows/
+          cd ../${{ env.REPO_NAME }}
           git add .github/workflows/blank.yml
-          git commit -m "Add CI/CD workflow from test-copy"
+          git commit -m "Add CI/CD workflow from test_copy"
           git push origin main
 
       - name: Create develop branch from main
