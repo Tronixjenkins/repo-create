@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      REPO_NAME: new-repo_51 # Set the repository name here
+      REPO_NAME: new-test-repo # Set the repository name here
       ORG_NAME: Tronixjenkins
 
     steps:
@@ -33,6 +33,19 @@ jobs:
             cat response.json
             exit 1
           fi
+
+      - name: Clone the source repository to copy the CI/CD workflow
+        run: |
+          git clone https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/test-copy.git
+
+      - name: Copy CI/CD workflow from test_copy to the new repository
+        run: |
+          mkdir -p ${{ env.REPO_NAME }}/.github/workflows
+          cp test-copy/.github/workflows/blank.yml ${{ env.REPO_NAME }}/.github/workflows/
+          cd ${{ env.REPO_NAME }}
+          git add .github/workflows/blank.yml
+          git commit -m "Add CI/CD workflow from test_copy"
+          git push origin main
 
       - name: Clone the new repository
         run: |
@@ -63,15 +76,15 @@ jobs:
           git checkout -b prd
           git push --set-upstream origin prd
 
-      - name: Clone the source repository to copy the CI/CD workflow
-        run: |
-          git clone https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/test-copy.git
+      # - name: Clone the source repository to copy the CI/CD workflow
+      #   run: |
+      #     git clone https://${{ secrets.GH_PAT }}@github.com/${{ env.ORG_NAME }}/test-copy.git
 
-      - name: Copy CI/CD workflow from test_copy to the new repository
-        run: |
-          mkdir -p ${{ env.REPO_NAME }}/.github/workflows
-          cp test-copy/.github/workflows/blank.yml ${{ env.REPO_NAME }}/.github/workflows/
-          cd ${{ env.REPO_NAME }}
-          git add .github/workflows/blank.yml
-          git commit -m "Add CI/CD workflow from test_copy"
-          git push origin main
+      # - name: Copy CI/CD workflow from test_copy to the new repository
+      #   run: |
+      #     mkdir -p ${{ env.REPO_NAME }}/.github/workflows
+      #     cp test-copy/.github/workflows/blank.yml ${{ env.REPO_NAME }}/.github/workflows/
+      #     cd ${{ env.REPO_NAME }}
+      #     git add .github/workflows/blank.yml
+      #     git commit -m "Add CI/CD workflow from test_copy"
+      #     git push origin main
