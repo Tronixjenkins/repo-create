@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
+      contents: write
 
     env:
       REPO_NAME: kuks-repo # Set the repository name here
@@ -21,10 +22,9 @@ jobs:
           app-id: ${{ vars.GHAPPID }}
           private-key: ${{ secrets.GH_APPID }}
 
-      - name: Use the token
-        env:
-          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
-          
+      - name: Set GitHub token
+        run: echo "GH_TOKEN=${{ steps.generate-token.outputs.token }}" >> $GITHUB_ENV
+
       - name: Checkout the current repository
         uses: actions/checkout@v2
 
@@ -37,7 +37,7 @@ jobs:
         id: create_repo
         run: |
           response=$(curl -s -o response.json -w "%{http_code}" -X POST \
-            -H "Authorization: token ${{ env.GH_TOKEN }}" \
+            -H "Authorization: token $GH_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/orgs/${{ env.ORG_NAME }}/repos \
             -d "{\"name\":\"${{ env.REPO_NAME }}\",\"private\":false}")
@@ -48,20 +48,19 @@ jobs:
             echo "Failed to create repository"
             exit 1
           fi
-          
 
       - name: Clone the new repository
         run: |
-          git clone https://${{ env.GH_TOKEN }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git
+          git clone https://${GH_TOKEN}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git
           cd ${{ env.REPO_NAME }}
           echo "# ${{ env.REPO_NAME }}" > README.md
           git add README.md
           git commit -m "Initial commit"
-          git push https://${{ env.GH_TOKEN }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git
+          git push https://${GH_TOKEN}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git
 
       - name: Clone the source repository to copy the CI/CD workflow
         run: |
-          git clone https://${{ env.GH_TOKEN }}@github.com/${{ env.ORG_NAME }}/test-copy.git
+          git clone https://${GH_TOKEN}@github.com/${{ env.ORG_NAME }}/test-copy.git
 
       - name: Copy CI/CD workflow from test_copy to the new repository
         run: |
@@ -77,18 +76,18 @@ jobs:
         run: |
           cd ${{ env.REPO_NAME }}
           git checkout -b develop
-          git push --set-upstream https://${{ env.GH_TOKEN }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git develop
+          git push --set-upstream https://${GH_TOKEN}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git develop
 
       - name: Create qat branch from develop
         run: |
           cd ${{ env.REPO_NAME }}
           git checkout develop
           git checkout -b qat
-          git push --set-upstream https://${{ env.GH_TOKEN }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git qat
+          git push --set-upstream https://${GH_TOKEN}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git qat
 
       - name: Create prd branch from qat
         run: |
           cd ${{ env.REPO_NAME }}
           git checkout qat
           git checkout -b prd
-          git push --set-upstream https://${{ env.GH_TOKEN }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git prd
+          git push --set-upstream https://${GH_TOKEN}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git prd
