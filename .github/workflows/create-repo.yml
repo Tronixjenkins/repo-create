@@ -51,7 +51,7 @@ jobs:
 
       - name: Clone the new repository
         run: |
-          git clone https://${GH_TOKEN}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git
+          git clone https://github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git
           cd ${{ env.REPO_NAME }}
           echo "# ${{ env.REPO_NAME }}" > README.md
           git add README.md
