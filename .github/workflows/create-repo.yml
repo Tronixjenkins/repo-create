@@ -26,15 +26,18 @@ jobs:
         id: create_repo
         run: |
           response=$(curl -s -o response.json -w "%{http_code}" -X POST \
-            -H "Authorization: token ${{ secrets.GH_APPID }}" \
+            -H "Authorization: token ${{ secrets.ORG_ACCESS_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/orgs/${{ env.ORG_NAME }}/repos \
             -d "{\"name\":\"${{ env.REPO_NAME }}\",\"private\":false}")
+          echo "HTTP Status Code: $response"
+          echo "Response JSON:"
+          cat response.json
           if [ "$response" -ne 201 ]; then
             echo "Failed to create repository"
-            cat response.json
             exit 1
           fi
+          
 
       - name: Clone the new repository
         run: |
