@@ -13,6 +13,7 @@ jobs:
     env:
       REPO_NAME: kaybae-repo # Set the repository name here
       ORG_NAME: Tronixjenkins
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
     steps:
       - name: Generate a token
